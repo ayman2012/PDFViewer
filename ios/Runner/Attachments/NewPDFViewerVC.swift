@@ -46,7 +46,7 @@ class NewPDFViewerVC: UIViewController {
     
     weak var parentdelegate: ViewerToAttachmentProtocol?
     var shouldEnableAnnotation: Bool = false
-
+    var onSaveCallback: ((String, Bool) -> Void)?
     private var currentMode: PDFViewMode = .view
     private var pdfDocumentURL: URL?
     private var isStampMode: Bool = false
@@ -274,21 +274,17 @@ class NewPDFViewerVC: UIViewController {
             return
         }
         
+       
+        
         // Save the exported PDF back to the original location if possible
         if let url = pdfDocumentURL {
             do {
                 try pdfData.write(to: url)
-                print("✅ PDF saved successfully to: \(url)")
-                NotificationCenter.default.post(
-                    name: .pdfDidSave,
-                    object: nil,
-                    userInfo: [
-                        "pdfPath": url.path,
-                        "isStamp": isStampMode
-                    ]
-                )
                 
-                // Notify parent delegate
+                let savedURL = saveModifiedPDF(originalURL: url)
+
+                onSaveCallback?(url, false)
+                
                 parentdelegate?.uploadAnnotationAttachment(isStampMode)
                 
                 // Hide UI and return to view mode
@@ -298,6 +294,38 @@ class NewPDFViewerVC: UIViewController {
                 print("⚠️ Could not write PDF to original location: \(error)")
             }
         }
+    }
+    
+    func documentsDirectory() -> URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+    }
+
+    func saveModifiedPDF(originalURL: URL) -> URL {
+        let destinationURL = documentsDirectory()
+            .appendingPathComponent("modified_sample.pdf")
+
+        try? FileManager.default.removeItem(at: destinationURL)
+
+        do {
+            try FileManager.default.copyItem(
+                at: originalURL,
+                to: destinationURL
+            )
+        } catch {
+            print("❌ Failed to copy PDF:", error)
+        }
+
+        return destinationURL
+    }
+    
+    private func closeAndReturnToFlutter() {
+        DispatchQueue.main.async {
+                guard let window = UIApplication.shared.windows.first else { return }
+
+                let flutterVC = FlutterViewController()
+                window.rootViewController = flutterVC
+                window.makeKeyAndVisible()
+            }
     }
 
     private func showSaveError() {
@@ -319,6 +347,7 @@ class NewPDFViewerVC: UIViewController {
         // Reset stamp flags
         isStampMode = false
         isSignMode = false
+        closeAndReturnToFlutter()
     }
 }
 

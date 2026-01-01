@@ -2,60 +2,41 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 🔥 Init native PDF bridge
+  PdfBridge.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+        ),
+      ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
+class MyHomePage extends StatelessWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  static const platform = MethodChannel('com.example.momo/pdf');
-
-  Future<void> openPdfViewer(String pdfPath) async {
-    try {
-      await platform.invokeMethod('openPdfViewer', {'pdfPath': pdfPath});
-    } on PlatformException catch (e) {
-      print("Failed to open PDF viewer: '${e.message}'.");
-    }
-  }
-
-  Future<void> openPdfViewerWithAnotation(String pdfPath) async {
-    try {
-      await platform.invokeMethod('openPdfViewerWithAnnotation', {'pdfPath': pdfPath});
-    } on PlatformException catch (e) {
-      print("Failed to open PDF viewer: '${e.message}'.");
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme
-            .of(context)
-            .colorScheme
-            .inversePrimary,
-        title: Text(widget.title),
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        title: Text(title),
       ),
       body: Center(
         child: Column(
@@ -73,36 +54,57 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             const SizedBox(height: 40),
 
-            /// 🔴 Existing button (unchanged)
             ElevatedButton.icon(
               onPressed: () async {
-                await openPdfViewer('sample.pdf');
+                await PdfBridge.openPdfViewer('sample.pdf');
               },
               icon: const Icon(Icons.picture_as_pdf),
               label: const Text('Open PDF Viewer'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 12),
-              ),
             ),
 
             const SizedBox(height: 16),
 
-
             ElevatedButton.icon(
               onPressed: () async {
-                await openPdfViewerWithAnotation('sample.pdf');
+                await PdfBridge.openPdfViewerWithAnnotation('sample.pdf');
               },
               icon: const Icon(Icons.open_in_new),
-              label: const Text('Open PDF Viewer (New)'),
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 24, vertical: 12),
-              ),
+              label: const Text('Open PDF Viewer (Annotation)'),
             ),
           ],
         ),
       ),
     );
+  }
+}
+class PdfBridge {
+  static const MethodChannel _channel = MethodChannel('pdf_native_channel');
+
+  static void init() {
+    _channel.setMethodCallHandler((call) async {
+      if (call.method == 'onPdfSaved') {
+        final path = call.arguments['path'];
+        final isStamp = call.arguments['isStamp'];
+
+        debugPrint('📄 PDF Saved: $path');
+        debugPrint('Stamp mode: $isStamp');
+
+        // Open the modified PDF
+        await openPdf(path);
+      }
+    });
+  }
+
+  static Future<void> openPdf(String path) async {
+    // Implement your Flutter PDF viewer here
+     debugPrint("Opening modified PDF: $path");
+  }
+
+  static Future<void> openPdfViewer(String pdfPath) async {
+    await _channel.invokeMethod('openPdfViewer', {'pdfPath': pdfPath});
+  }
+
+  static Future<void> openPdfViewerWithAnnotation(String pdfPath) async {
+    await _channel.invokeMethod('openPdfViewerWithAnnotation', {'pdfPath': pdfPath});
   }
 }

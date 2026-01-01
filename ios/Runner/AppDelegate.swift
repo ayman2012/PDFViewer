@@ -3,22 +3,32 @@ import UIKit
 
 var window: UIWindow?
 
+
 @main
 @objc class AppDelegate: FlutterAppDelegate {
     
+    private var pdfChannel: FlutterMethodChannel?
+
     
-  override func application(
-    _ application: UIApplication,
-    didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
+  override func application(_ application: UIApplication,
+                            didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+      
+      
+      window = UIWindow(frame: UIScreen.main.bounds)
+      let flutterVC = FlutterViewController()
+      pdfChannel = FlutterMethodChannel(
+          name: "pdf_native_channel",
+          binaryMessenger: flutterVC.binaryMessenger
+      )
+      window?.rootViewController = flutterVC
+      window?.makeKeyAndVisible()
+      
     GeneratedPluginRegistrant.register(with: self)
 
     // Setup method channel to receive calls from Flutter
     let controller = window?.rootViewController as! FlutterViewController
-    let pdfChannel = FlutterMethodChannel(name: "com.example.momo/pdf",
-                                          binaryMessenger: controller.binaryMessenger)
 
-    pdfChannel.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
+      pdfChannel?.setMethodCallHandler { [weak self] (call: FlutterMethodCall, result: @escaping FlutterResult) in
      
       // Extract the PDF path from arguments
       guard let args = call.arguments as? [String: Any],
@@ -36,11 +46,11 @@ var window: UIWindow?
        if let bundlePath = Bundle.main.path(forResource: fileName, ofType: fileExtension) {
          // Call your native function to open the PDF
            if call.method == "openPdfViewer"  {
-               self?.openMyNativePdfViewer(pdfFilePath: bundlePath)
+               self?.openNativePdfViewer(pdfPath: bundlePath, withAnnotation: false)
            }
            
            if call.method == "openPdfViewerWithAnnotation"  {
-               self?.openMyNativePdfViewerWithAnnotation(pdfFilePath: bundlePath)
+               self?.openNativePdfViewer(pdfPath: bundlePath, withAnnotation: true)
            }
 
          result(true)
@@ -53,40 +63,30 @@ var window: UIWindow?
 
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-
-  // MARK: - Your Native PDF Viewer Function
-  // Add your native code here to open the PDF
-  private func openMyNativePdfViewer(pdfFilePath: String) {
-    // TODO: Add your native code to open the PDF viewer here
-    // The pdfFilePath parameter contains the full path to sample.pdf
-
-    print("Opening PDF at path: \(pdfFilePath)")
-      
-      window = UIWindow(frame: UIScreen.main.bounds)
-      
-      let vc = NewPDFViewerVC()
-      vc.loadPDF(from: pdfFilePath)
- 
-      window?.rootViewController = vc
-      window?.makeKeyAndVisible()
-  }
     
-    private func openMyNativePdfViewerWithAnnotation(pdfFilePath: String) {
-      // TODO: Add your native code to open the PDF viewer here
-      // The pdfFilePath parameter contains the full path to sample.pdf
+    private func openNativePdfViewer(pdfPath: String, withAnnotation: Bool) {
+        DispatchQueue.main.async {
+            // Load NewPDFViewerVC
+            let pdfVC = NewPDFViewerVC()
+            pdfVC.loadPDF(from: pdfPath)
+            pdfVC.shouldEnableAnnotation = withAnnotation
+            pdfVC.modalPresentationStyle = .fullScreen
 
-      print("Opening PDF at path: \(pdfFilePath)")
-        
-        window = UIWindow(frame: UIScreen.main.bounds)
-        
-        let vc = NewPDFViewerVC()
-        vc.loadPDF(from: pdfFilePath)
-        vc.shouldEnableAnnotation = true
-   
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
+            // Provide a callback to send back modified PDF
+            pdfVC.onSaveCallback = { [weak self] modifiedPath, isStamp in
+                self?.pdfChannel?.invokeMethod("onPdfSaved", arguments: [
+                    "path": modifiedPath,
+                    "isStamp": isStamp
+                ])
+            }
+
+            // Present on top of the top-most VC
+            if var topVC = self.window?.rootViewController {
+                while let presented = topVC.presentedViewController {
+                    topVC = presented
+                }
+                topVC.present(pdfVC, animated: true)
+            }
+        }
     }
-}
-extension Notification.Name {
-    static let pdfDidSave = Notification.Name("pdfDidSave")
 }
