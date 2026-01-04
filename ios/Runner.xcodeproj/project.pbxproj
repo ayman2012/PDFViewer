@@ -34,6 +34,7 @@
 		756EDD442F01B9EC00B83120 /* NewPDFViewerVC.xib in Resources */ = {isa = PBXBuildFile; fileRef = 756EDD0F2F01B9EC00B83120 /* NewPDFViewerVC.xib */; };
 		756EDD4A2F01C21300B83120 /* SBQuickLook in Frameworks */ = {isa = PBXBuildFile; productRef = 756EDD492F01C21300B83120 /* SBQuickLook */; };
 		756EDD4D2F01C25200B83120 /* KeychainSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 756EDD4C2F01C25200B83120 /* KeychainSwift */; };
+		759D72C62F083EBA006CB1F8 /* SSO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 759D72C52F083EBA006CB1F8 /* SSO.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -92,6 +93,7 @@
 		756EDCFC2F01B5A000B83120 /* ToolOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToolOptionsViewController.swift; sourceTree = "<group>"; };
 		756EDD0E2F01B9EC00B83120 /* NewPDFViewerVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewPDFViewerVC.swift; sourceTree = "<group>"; };
 		756EDD0F2F01B9EC00B83120 /* NewPDFViewerVC.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = NewPDFViewerVC.xib; sourceTree = "<group>"; };
+		759D72C52F083EBA006CB1F8 /* SSO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SSO.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		8688C4F430A76EA639C2D526 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		8F910F5C5EC4223B6D4660AF /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -149,7 +151,6 @@
 				919F6E6CDBD412E1DA339F2C /* Pods-RunnerTests.release.xcconfig */,
 				D347750905B9E75545D150B3 /* Pods-RunnerTests.profile.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -180,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				756EDD0E2F01B9EC00B83120 /* NewPDFViewerVC.swift */,
+				759D72C52F083EBA006CB1F8 /* SSO.swift */,
 				756EDD0F2F01B9EC00B83120 /* NewPDFViewerVC.xib */,
 			);
 			path = Attachments;
@@ -448,6 +450,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				759D72C62F083EBA006CB1F8 /* SSO.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				756EDCEC2F01B55D00B83120 /* UserDefaults+ImageCaching.swift in Sources */,
 				756EDD342F01B9EC00B83120 /* NewPDFViewerVC.swift in Sources */,
@@ -559,8 +562,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = HF9MF3N4H2;
+				DEVELOPMENT_TEAM = A2APW2ATDR;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -573,8 +578,9 @@
 					"$(PROJECT_DIR)/moamalat-new/Moamalat-App/PDFViewer/PDFLib",
 					"$(PROJECT_DIR)/Runner/PDFViewer/PDFLib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -748,8 +754,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = HF9MF3N4H2;
+				DEVELOPMENT_TEAM = A2APW2ATDR;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -762,8 +770,9 @@
 					"$(PROJECT_DIR)/moamalat-new/Moamalat-App/PDFViewer/PDFLib",
 					"$(PROJECT_DIR)/Runner/PDFViewer/PDFLib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -777,8 +786,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = HF9MF3N4H2;
+				DEVELOPMENT_TEAM = A2APW2ATDR;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
@@ -791,8 +802,9 @@
 					"$(PROJECT_DIR)/moamalat-new/Moamalat-App/PDFViewer/PDFLib",
 					"$(PROJECT_DIR)/Runner/PDFViewer/PDFLib",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.momo2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";

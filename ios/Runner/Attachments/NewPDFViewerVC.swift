@@ -283,7 +283,7 @@ class NewPDFViewerVC: UIViewController {
                 
                 let savedURL = saveModifiedPDF(originalURL: url)
 
-                onSaveCallback?(url, false)
+                onSaveCallback?(url.absoluteString, false)
                 
                 parentdelegate?.uploadAnnotationAttachment(isStampMode)
                 
